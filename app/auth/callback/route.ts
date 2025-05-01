@@ -1,4 +1,5 @@
-export const dynamic = "force-dynamic"
+export const dynamic = 'force-static'
+export const runtime = 'edge'
 
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
@@ -14,12 +15,8 @@ export async function GET(request: NextRequest) {
     try {
       const { error } = await supabase.auth.exchangeCodeForSession(code)
       if (error) throw error
-      
-      // Ensure session is established before redirect
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error("Failed to establish session")
+      return NextResponse.redirect(new URL("/", requestUrl.origin))
     } catch (error) {
-      // Redirect to login with error
       return NextResponse.redirect(new URL("/auth/login?error=auth_failed", requestUrl.origin))
     }
   }

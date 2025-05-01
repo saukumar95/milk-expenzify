@@ -13,16 +13,15 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('https://', '') || '',
     ],
   },
-  output: 'export',  // Changed from 'standalone' to 'export'
   reactStrictMode: true,
   devIndicators: false,
-  basePath: '/milk-expenzify',  // Add basePath for GitHub Pages
-  async redirects() {
-    return []
-  },
+  basePath: '/milk-expenzify',
   experimental: {
-    serverActions: true,
-  },
+    serverActions: {
+      allowedOrigins: ['localhost:3000'],
+      bodySizeLimit: '2mb'
+    }
+  }
 }
 
 export default nextConfig
