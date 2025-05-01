@@ -15,7 +15,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   devIndicators: false,
-  basePath: '/',
+  basePath: '',
   experimental: {
     serverActions: {
       allowedOrigins: ['*'],
