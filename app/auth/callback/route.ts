@@ -1,4 +1,5 @@
-export const dynamic = 'force-static'
+export const preferredRegion = 'auto'
+export const dynamic = 'force-dynamic'
 
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
@@ -14,10 +15,10 @@ export async function GET(request: NextRequest) {
     try {
       const { error } = await supabase.auth.exchangeCodeForSession(code)
       if (error) throw error
-      return NextResponse.redirect(new URL("/", requestUrl.origin))
+      return NextResponse.redirect(new URL("/milk-expenzify", requestUrl.origin))
     } catch (error) {
-      return NextResponse.redirect(new URL("/auth/login?error=auth_failed", requestUrl.origin))
+      return NextResponse.redirect(new URL("/milk-expenzify/auth/login?error=auth_failed", requestUrl.origin))
     }
   }
-  return NextResponse.redirect(new URL("/", requestUrl.origin))
+  return NextResponse.redirect(new URL("/milk-expenzify", requestUrl.origin))
 }
