@@ -18,7 +18,7 @@ const nextConfig = {
   basePath: '/milk-expenzify',
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost:3000'],
+      allowedOrigins: ['*'],
       bodySizeLimit: '2mb'
     }
   }
