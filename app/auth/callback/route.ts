@@ -1,5 +1,4 @@
 export const dynamic = 'force-static'
-export const runtime = 'edge'
 
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
