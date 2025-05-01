@@ -1,11 +1,12 @@
 "use client"
 
+import { Suspense } from "react"
 import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { AuthForm } from "@/components/auth/auth-form"
 import { useToast } from "@/hooks/use-toast"
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams()
   const { toast } = useToast()
 
@@ -28,5 +29,13 @@ export default function LoginPage() {
         <AuthForm />
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center p-4">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   )
 }
