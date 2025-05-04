@@ -148,11 +148,9 @@ export function MilkDataProvider({ children }: { children: ReactNode }) {
         .from("user_settings")
         .select("*")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
-      if (settingsError && settingsError.code !== "PGRST116") {
-        throw settingsError;
-      }
+      if (settingsError) throw settingsError;
 
       if (settingsData) {
         setMilkPrice(settingsData.milk_price);
@@ -160,11 +158,22 @@ export function MilkDataProvider({ children }: { children: ReactNode }) {
         setVendorContact(settingsData.vendor_contact || "");
         setVendorAddress(settingsData.vendor_address || "");
       } else {
-        await supabase.from("user_settings").insert({
-          user_id: userId,
-          milk_price: 60,
-          vendor_name: "Local Milk Vendor",
-        });
+        const { error: insertError } = await supabase
+          .from("user_settings")
+          .upsert({
+            user_id: userId,
+            milk_price: 60,
+            vendor_name: "Local Milk Vendor",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id'
+          });
+        
+        if (insertError) throw insertError;
+        
+        setMilkPrice(60);
+        setVendorName("Local Milk Vendor");
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -173,7 +182,6 @@ export function MilkDataProvider({ children }: { children: ReactNode }) {
         description: "Failed to load your data. Please refresh the page.",
         variant: "destructive",
       });
-      throw error; // Propagate error to handle loading state in caller
     }
   };
 
@@ -263,14 +271,18 @@ export function MilkDataProvider({ children }: { children: ReactNode }) {
     if (!user) return;
 
     try {
-      const { error } = await supabase.from("user_settings").upsert({
-        user_id: user.id,
-        milk_price: price,
-        vendor_name: vendorName,
-        vendor_contact: vendorContact || null,
-        vendor_address: vendorAddress || null,
-        updated_at: new Date().toISOString(),
-      });
+      const { error } = await supabase
+        .from("user_settings")
+        .upsert({
+          user_id: user.id,
+          milk_price: price,
+          vendor_name: vendorName,
+          vendor_contact: vendorContact || null,
+          vendor_address: vendorAddress || null,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        });
 
       if (error) throw error;
 
@@ -279,7 +291,7 @@ export function MilkDataProvider({ children }: { children: ReactNode }) {
       console.error("Error updating milk price:", error);
       toast({
         title: "Error",
-        description: "Failed to update milk price. Please try again.",
+        description: "Failed to update settings. Please try again.",
         variant: "destructive",
       });
     }
